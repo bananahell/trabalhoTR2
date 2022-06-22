@@ -1,8 +1,8 @@
 # Trabalho de TR2
 
-Trabalho da matéria de Teleinformática e Redes 2
-14/0065032 - Pedro Nogueira
-UnB - 2022/1
+Trabalho da matéria de Teleinformática e Redes 2  
+14/0065032 - Pedro Nogueira  
+UnB - 2022/1  
 
 ## Especificações
 
