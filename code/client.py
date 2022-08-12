@@ -4,7 +4,7 @@ import threading
 from utils import *
 
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 connected = True
 
 
@@ -13,6 +13,7 @@ def main():
     client.connect(ADDR)
     username = input('Input your username: ')
     room = input('Choose a room to join: ')
+    print(f"\nRoom {room}\n")
     message = username.encode(FORMAT)
     usernameLength = len(message)
     sendLength = str(usernameLength).encode(FORMAT)

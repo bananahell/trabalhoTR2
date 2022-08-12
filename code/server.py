@@ -8,7 +8,7 @@ rooms = {}
 
 def main():
     print("[STARTING] Server is starting...")
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
     server.bind(ADDR)
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
@@ -24,6 +24,9 @@ def main():
             room = conn.recv(msgLength).decode(FORMAT)
         roomFound = rooms.get(room)
         if roomFound:
+            for client in roomFound:
+                client.send(
+                    f"        {username} connected".encode(FORMAT))
             roomFound.append(conn)
         else:
             newRoom = [conn]
@@ -47,9 +50,11 @@ def handleClient(conn, addr, room, username):
                 if client != conn:
                     if msg == DISCONNECT_MESSAGE:
                         connected = False
-                        client.send(f"{username} disconnected".encode(FORMAT))
+                        client.send(
+                            f"        {username} disconnected".encode(FORMAT))
                     else:
-                        client.send(f"[{username}]: {msg}".encode(FORMAT))
+                        client.send(
+                            f"                [{username}]: {msg}".encode(FORMAT))
             if msg == DISCONNECT_MESSAGE:
                 connected = False
                 print(f"[DISCONNECTION] {username} ({addr}) disconnected...")
