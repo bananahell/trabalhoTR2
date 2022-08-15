@@ -2,6 +2,7 @@
 
 Trabalho da matéria de Teleinformática e Redes 2  
 14/0065032 - Pedro Nogueira  
+16/0013259 - Lucca Huguet  
 UnB - 2022/1  
 
 ## Especificações
