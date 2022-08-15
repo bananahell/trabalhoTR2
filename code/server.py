@@ -1,6 +1,6 @@
 import socket
 import threading
-import utils as utils
+from utils import *
 
 
 rooms = {}
@@ -8,24 +8,27 @@ rooms = {}
 
 def main():
     print("[STARTING] Server is starting...")
-    server = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-    server.bind(utils.ADDR)
-    print(f"[LISTENING] Server is listening on {utils.SERVER}")
+    print("ADDRESS_FAMILY = " + str(ADDRESS_FAMILY))
+    print("ADDR = " + str(ADDR))
+    server = socket.socket(ADDRESS_FAMILY, socket.SOCK_STREAM)
+    server.bind(ADDR)
+    print("[LISTENING] Server is listening on " + SERVER)
     while True:
         server.listen(20)
         conn, addr = server.accept()
         username = ""
         room = 0
-        msgLength = conn.recv(utils.HEADER).decode(utils.FORMAT)
+        msgLength = conn.recv(HEADER).decode(FORMAT)
         if msgLength:
             msgLength = int(msgLength)
-            username = conn.recv(msgLength).decode(utils.FORMAT)
-            msgLength = int(conn.recv(utils.HEADER).decode(utils.FORMAT))
-            room = conn.recv(msgLength).decode(utils.FORMAT)
+            username = conn.recv(msgLength).decode(FORMAT)
+            msgLength = int(conn.recv(HEADER).decode(FORMAT))
+            room = conn.recv(msgLength).decode(FORMAT)
         roomFound = rooms.get(room)
         if roomFound:
             for client in roomFound:
-                client.send(f"[Notice]: {username} connected".encode(utils.FORMAT))
+                auxstring = "[NOTICE] " + username + " connected"
+                client.send(auxstring.encode(FORMAT))
             roomFound.append(conn)
         else:
             newRoom = [conn]
@@ -34,32 +37,30 @@ def main():
             target=handleClient, args=(conn, addr, room, username)
         )
         thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}\n")
+        print("[ACTIVE CONNECTIONS] " + str(threading.active_count() - 1))
 
 
 def handleClient(conn, addr, room, username):
-    print(f"[NEW CONNECTION] {username} connected to room {room}")
+    print("[NEW CONNECTION] " + username + " connected to room " + room)
     connected = True
     while connected:
-        msgLength = conn.recv(utils.HEADER).decode(utils.FORMAT)
+        msgLength = conn.recv(HEADER).decode(FORMAT)
         if msgLength:
             msgLength = int(msgLength)
-            msg = conn.recv(msgLength).decode(utils.FORMAT)
+            msg = conn.recv(msgLength).decode(FORMAT)
             roomFound = rooms.get(room)
             for client in roomFound:
                 if client != conn:
-                    if msg == utils.DISCONNECT_MESSAGE:
+                    if msg == DISCONNECT_MESSAGE:
                         connected = False
-                        client.send(
-                            f"[Notice]: {username} disconnected".encode(utils.FORMAT)
-                        )
+                        auxstring = "[NOTICE] " + username + " disconnected"
+                        client.send(auxstring.encode(FORMAT))
                     else:
-                        client.send(
-                            f"   [Room {room}][{username}]: {msg}".encode(utils.FORMAT)
-                        )
-            if msg == utils.DISCONNECT_MESSAGE:
+                        auxstring = "[Room " + room + "][" + username + "]: " + msg
+                        client.send(auxstring.encode(FORMAT))
+            if msg == DISCONNECT_MESSAGE:
                 connected = False
-                print(f"[DISCONNECTION] {username} ({addr}) disconnected...")
+                print("[DISCONNECTION] " + username + " (" + str(addr) + ") disconnected...")
                 roomFound.remove(conn)
     conn.close()
 

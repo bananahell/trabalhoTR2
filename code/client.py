@@ -1,10 +1,10 @@
-# from inspect import isclass
 import socket
 import threading
+from utils import *
 import utils as utils
 
 
-client = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+client = socket.socket(ADDRESS_FAMILY, socket.SOCK_STREAM)
 connected = True
 
 
@@ -61,7 +61,7 @@ def send():
         if connected:
             print("\033[A", end="")  # move the cursor up a line
             print("\033[K", end="")  # erase the line
-            print(f"[Room {room}][{username}]: " + msg)
+            print("[Room " + room + "][" + username + "]: " + msg)
 
 
 if __name__ == "__main__":
